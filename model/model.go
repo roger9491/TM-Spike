@@ -4,6 +4,7 @@ type Product struct {
 	ID          int64  `gorm:"index" json:"id"`
 	ProductName string `gorm:"column:productname;not null" json:"productname"`
 	Count       int64  `gorm:"column:count;not null" json:"count"`
+	IsDelete 	int		`gorm:"column:isdelete;not null" json:"isdelete"`
 }
 
 func (u *Product) TableName() string {

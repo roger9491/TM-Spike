@@ -12,7 +12,7 @@ import (
 
 func OrderApi(e *gin.Engine) {
 
-	e.GET("/order", Order)
+	e.DELETE("/order", Order)
 	e.PUT("/product", PutProduct)
 }
 
@@ -69,11 +69,12 @@ func PutProduct(c *gin.Context) {
 		return
 	}
 
-	err = service.OrderRepo.Create(product.ProductName, product.Count)
+	var productInfo model.ProductInfo
+	productInfo.Status, err = service.OrderRepo.Create(product.ProductName, product.Count)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusCreated, product)
+	c.JSON(http.StatusCreated, productInfo)
 }
