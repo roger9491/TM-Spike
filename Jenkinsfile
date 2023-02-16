@@ -6,7 +6,7 @@ pipeline {
     
     environment{
         PROJECT = 'tm-spike'
-        IMAGE-TAG
+        IMAGE_TAG
     }
 
     stages {
