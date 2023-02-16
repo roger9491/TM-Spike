@@ -6,7 +6,7 @@ pipeline {
     
     environment{
         PROJECT = 'tm-spike'
-        IMAGE_TAG = ''
+        TAG = ''
     }
 
     stages {
@@ -34,8 +34,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
                     echo 'docker login successful'
-                    sh "${env.IMAGE_TAG}=\$(git log -1 --pretty=%h)"
-                    sh "docker tag ${env.PROJECT} ${env.dockerHubUser}/${env.PROJECT}:${env.IMAGE_TAG}"
+                    sh "${env.TAG}=\$(git log -1 --pretty=%h)"
+                    sh "docker tag ${env.PROJECT} ${env.dockerHubUser}/${env.PROJECT}:${env.TAG}"
                     sh "docker push ${env.dockerHubUser}/${env.PROJECT}"
                 }
             }
