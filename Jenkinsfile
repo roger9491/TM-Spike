@@ -35,8 +35,8 @@ pipeline {
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
                     echo 'docker login successful'
                     // sh "PROJECT_IMAGE_TAG=\$(git log -1 --pretty=%h)"
-                    sh "docker tag ${env.PROJECT} ${env.dockerHubUser}/${env.PROJECT}:${BUILD_TAG}"
-                    sh "docker push ${env.dockerHubUser}/${env.PROJECT}"
+                    sh "docker tag ${env.PROJECT} ${env.dockerHubUser}/${env.PROJECT}:${BUILD_NUMBER}"
+                    sh "docker push ${env.dockerHubUser}/${env.PROJECT}:${BUILD_NUMBER}"
                 }
             }
         }
