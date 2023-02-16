@@ -19,7 +19,7 @@ pipeline {
             steps{
                 // 測試環境需使用docker ，使用掛載捲的方式
                 sh "docker run -v /var/run/docker.sock:/var/run/docker.sock ${env.PROJECT}"
-                sh 'echo y | docker image prune -a'
+                sh 'echo y | docker system prune'
             }
         }
         stage('Build Deployment image'){
