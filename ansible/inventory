@@ -1,0 +1,2 @@
+[master]
+master1 ansible_connection=ssh ansible_host=10.250.75.102 ansible_ssh_pass=roger ansible_user=root

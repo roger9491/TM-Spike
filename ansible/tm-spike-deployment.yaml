@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tm-spike-deployment
+  labels:
+    app: tm-spike
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tm-spike
+  template:
+    metadata:
+      labels:
+        app: tm-spike
+    spec:
+      containers:
+      - name: tm-spike
+        image: aw52052001/tm-spike
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: HOST_IP
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: host_ip
+        - name: HOST_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: host_port
+        - name: DB_DBNAME
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: db_dbname
+        - name: DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: db_username
+        - name: DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: db_password
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: db_host
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: db_port
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: tm-spike-service
+spec:
+  type: NodePort
+  selector:
+    app: tm-spike
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30040
+

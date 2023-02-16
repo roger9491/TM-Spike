@@ -1,0 +1,36 @@
+# ansible-playbook -i inventory playbook.yaml
+- name: Ansible k8s
+  hosts: master
+  remote_user: ubuntu
+  tasks:
+    - name: Create a k8s namespace
+      kubernetes.core.k8s: 
+        name: tm-namespace
+        api_version: v1
+        kind: Namespace
+        state: present  # 檢查是否創建namespace，若否創建
+
+    - name: add several users
+      become: true  #提升權限
+      # 複製yaml檔到k8s主機上
+      copy:
+        src: "{{item  | basename}}"
+        dest: /tmp/"{{item  | basename}}"
+            # 佈署
+      with_fileglob:
+        - tm*.yaml
+
+    - name: add several users 
+      kubernetes.core.k8s:
+        apply: yes
+        namespace: tm-namespace
+        src: /tmp/"{{item  | basename}}"
+      with_fileglob:
+        - tm*.yaml
+
+
+
+
+
+
+
