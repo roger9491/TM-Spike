@@ -3,8 +3,6 @@ WORKDIR /app
 COPY . .
 RUN go mod tidy
 RUN go mod download
-# RUN go build -o /project
-# Run test
 CMD CGO_ENABLED=0 go test ./...
 
 FROM golang as build
