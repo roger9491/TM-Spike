@@ -42,7 +42,7 @@ pipeline {
         }
         stage('Execute Ansible'){
             steps{
-                ansiblePlaybook installation: 'Ansible', playbook: './ansible/playbook.yaml'
+                ansiblePlaybook installation: 'Ansible',  inventory: './ inventory', playbook: './ansible/playbook.yaml'
             }
         }
         
