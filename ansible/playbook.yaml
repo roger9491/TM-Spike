@@ -2,6 +2,11 @@
 - name: Ansible k8s
   hosts: master
   remote_user: ubuntu
+  vars:
+    namespace: "tm-namespace"
+    project_name: "tm-spike"
+    user_name: "aw52052001"
+    image_tag: "{{lookup('env', 'BUILD_NUMBER')}}"
   tasks:
     - name: Create a k8s namespace
       kubernetes.core.k8s: 
@@ -27,6 +32,9 @@
         src: /tmp/"{{item  | basename}}"
       with_fileglob:
         - tm*.yaml
+
+    - name: Exec update image  
+      shell: kubectl set image deployment/{{project_name}}-deployment -n {{namespace}} {{project_name}}={{user_name}}/{{project_name}}:{{image_tag}}
 
 
 
