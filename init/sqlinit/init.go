@@ -57,7 +57,7 @@ func  InitMySQL(username, password, host, port, dbname string) *gorm.DB {
 
 	sqlDB, _ := db.DB()
 	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(10000)
+	sqlDB.SetMaxOpenConns(1000)
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	return db
