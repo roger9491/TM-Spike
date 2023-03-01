@@ -52,6 +52,10 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 			panic(err)
 		}
 		produdctInfo.Status = successful
+		
+		if err = dao.CreateOrder(product.ProductName, 1, tx, c); err != nil{
+			panic(err)
+		}
 
 		if count == 1 {
 			if err = dao.UpdateOrderIsDelete(product.ProductName, tx, c); err != nil{

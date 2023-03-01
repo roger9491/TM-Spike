@@ -70,7 +70,7 @@ func InitMySQL(username, password, host, port, dbname string) *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&model.Product{})
+	db.AutoMigrate(&model.Product{}, &model.Order{})
 
 	sqlDB, _ := db.DB()
 	sqlDB.SetMaxIdleConns(100)

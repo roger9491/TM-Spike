@@ -52,9 +52,18 @@ func UpdateOrderIsDelete(product string, tx *gorm.DB, c *gin.Context) (err error
 }
 
 func CreateProduct(productName string, count int64, isDelete int, tx *gorm.DB, c *gin.Context) (err error) {
-	sql := "INSERT INTO product (productname, count, isdelete) VALUES ( ?, ?, ? );"
+	sql := "INSERT INTO `product` (productname, count, isdelete) VALUES ( ?, ?, ? );"
 
 	if err = tx.WithContext(c.Request.Context()).Exec(sql, productName, count, isDelete).Error; err != nil {
+		log.Println("err ", err)
+	}
+	return
+}
+// 建立訂單
+func CreateOrder(productName string, count int64, tx *gorm.DB, c *gin.Context) (err error) {
+	sql := "INSERT INTO `order` (productname, count) VALUES ( ?, ?);"
+
+	if err = tx.WithContext(c.Request.Context()).Exec(sql, productName, count).Error; err != nil {
 		log.Println("err ", err)
 	}
 	return
