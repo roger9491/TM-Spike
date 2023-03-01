@@ -56,6 +56,21 @@ spec:
             configMapKeyRef:
               name: tm
               key: db_port
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT_IP
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: otel_exporter_otlp_endpoint_ip
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: otel_exporter_otlp_endpoint_port
+        - name: INSECURE_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: insecure_mode
 
 ---
 

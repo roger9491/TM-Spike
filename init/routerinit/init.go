@@ -1,7 +1,10 @@
 package routerinit
 
 import (
+	"TM-Spike/init/configinit"
+
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 type Option func(engine *gin.Engine)
@@ -16,6 +19,7 @@ func Include(optObjs ...Option) {
 func InitRouters() *gin.Engine {
 
 	router := gin.Default()
+	router.Use(otelgin.Middleware(configinit.ServiceName))
 	for _, opt := range options {
 		opt(router)
 	}

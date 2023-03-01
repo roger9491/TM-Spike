@@ -4,6 +4,7 @@ import (
 	"TM-Spike/model"
 	"log"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -12,48 +13,48 @@ import (
 
 
 
-func SelectOrder(product string, tx *gorm.DB) (count int64, err error) {
+func SelectOrder(product string, tx *gorm.DB, c *gin.Context) (count int64, err error) {
 	sql := "select count from product where productname = ? AND isdelete = 0 for update;"
 
-	if err = tx.Raw(sql, product).Scan(&count).Error; err != nil {
+	if err = tx.WithContext(c.Request.Context()).Raw(sql, product).Scan(&count).Error; err != nil {
 		log.Println("err ", err)
 	}
 
 	return
 }
 
-func SelectProduct(productName string, tx *gorm.DB) (products []model.Product, err error){
+func SelectProduct(productName string, tx *gorm.DB, c *gin.Context) (products []model.Product, err error){
 	sql := "select * from product where productname = ? AND isdelete = 0"
 	
-	if err = tx.Raw(sql, productName).Scan(&products).Error; err != nil {
+	if err = tx.WithContext(c.Request.Context()).Raw(sql, productName).Scan(&products).Error; err != nil {
 		log.Println("err ", err)
 	}
 
 	return
 }
 
-func UpdateOrder(product string, tx *gorm.DB) (err error) {
+func UpdateOrder(product string, tx *gorm.DB, c *gin.Context) (err error) {
 	sql := "update product set count = count - 1 where productname = ?"
-	if err = tx.Exec(sql, product).Error; err != nil {
+	if err = tx.WithContext(c.Request.Context()).Exec(sql, product).Error; err != nil {
 		log.Println("err ", err)
 	}
 
 	return
 }
 
-func UpdateOrderIsDelete(product string, tx *gorm.DB) (err error) {
+func UpdateOrderIsDelete(product string, tx *gorm.DB, c *gin.Context) (err error) {
 	sql := "update product set isdelete = 1 where productname = ?"
-	if err = tx.Exec(sql, product).Error; err != nil {
+	if err = tx.WithContext(c.Request.Context()).Exec(sql, product).Error; err != nil {
 		log.Println("err ", err)
 	}
 
 	return
 }
 
-func CreateProduct(productName string, count int64, isDelete int, tx *gorm.DB) (err error) {
+func CreateProduct(productName string, count int64, isDelete int, tx *gorm.DB, c *gin.Context) (err error) {
 	sql := "INSERT INTO product (productname, count, isdelete) VALUES ( ?, ?, ? );"
 
-	if err = tx.Exec(sql, productName, count, isDelete).Error; err != nil {
+	if err = tx.WithContext(c.Request.Context()).Exec(sql, productName, count, isDelete).Error; err != nil {
 		log.Println("err ", err)
 	}
 	return

@@ -5,6 +5,7 @@ import (
 	"TM-Spike/model"
 	"log"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -22,8 +23,8 @@ var (
 
 type OrderRepoInterface interface {
 	Initialize(*gorm.DB)
-	Order(model.Product) (model.ProductInfo, error)
-	Create(string, int64) (int, error)
+	Order(model.Product, *gin.Context) (model.ProductInfo, error)
+	Create(string, int64, *gin.Context) (int, error)
 }
 
 type orderSQL struct {
@@ -34,7 +35,7 @@ func (od *orderSQL) Initialize(db *gorm.DB) {
 	od.db = db
 }
 
-func (od *orderSQL) Order(product model.Product) (produdctInfo model.ProductInfo, err error) {
+func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo model.ProductInfo, err error) {
 	tx := od.db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -45,15 +46,15 @@ func (od *orderSQL) Order(product model.Product) (produdctInfo model.ProductInfo
 		}
 	}()
 
-	count, err := dao.SelectOrder(product.ProductName, tx)
+	count, err := dao.SelectOrder(product.ProductName, tx, c)
 	if count > 0 {
-		if err = dao.UpdateOrder(product.ProductName, tx); err != nil {
+		if err = dao.UpdateOrder(product.ProductName, tx, c); err != nil {
 			panic(err)
 		}
 		produdctInfo.Status = successful
 
 		if count == 1 {
-			if err = dao.UpdateOrderIsDelete(product.ProductName, tx); err != nil{
+			if err = dao.UpdateOrderIsDelete(product.ProductName, tx, c); err != nil{
 				panic(err)
 			}
 		}
@@ -67,7 +68,7 @@ func (od *orderSQL) Order(product model.Product) (produdctInfo model.ProductInfo
 	return
 }
 
-func (od *orderSQL) Create(productName string, count int64) (status int, err error) {
+func (od *orderSQL) Create(productName string, count int64, c *gin.Context) (status int, err error) {
 	tx := od.db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -78,7 +79,7 @@ func (od *orderSQL) Create(productName string, count int64) (status int, err err
 		}
 	}()
 
-	productList, err := dao.SelectProduct(productName, tx)
+	productList, err := dao.SelectProduct(productName, tx, c)
 	if err != nil {
 		panic(err)
 	}
@@ -89,7 +90,7 @@ func (od *orderSQL) Create(productName string, count int64) (status int, err err
 	}
 
 
-	if err = dao.CreateProduct(productName, count, isNotDelete, tx); err != nil {
+	if err = dao.CreateProduct(productName, count, isNotDelete, tx, c); err != nil {
 		panic(err)
 	}
 

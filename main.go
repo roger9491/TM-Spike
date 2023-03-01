@@ -2,10 +2,12 @@ package main
 
 import (
 	"TM-Spike/init/configinit"
+	"TM-Spike/init/opentelemetryinit"
 	"TM-Spike/init/routerinit"
 	"TM-Spike/init/sqlinit"
 	"TM-Spike/router"
 	"TM-Spike/service"
+	"context"
 	"log"
 	"os"
 )
@@ -27,6 +29,11 @@ func main() {
 	log.Println("test test ")
 
 	configinit.LoadEnv()
+
+	// 初始化 opentelemetryinit
+
+	cleanup := opentelemetryinit.InitTracer()
+	defer cleanup(context.Background())
 
 	// 初始化資料庫
 	service.OrderRepo.Initialize(sqlinit.InitMySQL(configinit.DBUsername, configinit.DBPassword, configinit.DBHost, configinit.DBPort, configinit.DBName))

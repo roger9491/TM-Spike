@@ -10,15 +10,22 @@ import (
 )
 
 var (
+	//  DB
 	DBName     string
 	DBHost     string
 	DBPort     string
 	DBUsername string
 	DBPassword string
 
-	HostIp		string
-	HostPort 	string
+	// Gin
+	HostIp   string
+	HostPort string
 
+	// OpenTelemetry
+	ServiceName      string
+	CollectorURLIP   string
+	CollectorURLPort string
+	Insecure         string
 )
 
 func LoadEnv() {
@@ -42,4 +49,8 @@ func LoadEnv() {
 	HostIp = os.Getenv("HOST_IP")
 	HostPort = os.Getenv("HOST_PORT")
 
+	ServiceName = os.Getenv("SERVICE_NAME")
+	CollectorURLIP = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT_IP")
+	CollectorURLPort = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT_PORT")
+	Insecure = os.Getenv("INSECURE_MODE")
 }

@@ -9,6 +9,10 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+
+	"gorm.io/plugin/opentelemetry/logging/logrus"
+	"gorm.io/plugin/opentelemetry/tracing"
 )
 
 // test
@@ -40,24 +44,37 @@ func creatDataBase(username, password, host, port, dbname string) {
 
 }
 
-func  InitMySQL(username, password, host, port, dbname string) *gorm.DB {
+func InitMySQL(username, password, host, port, dbname string) *gorm.DB {
 
 	creatDataBase(username, password, host, port, dbname)
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		username, password, host, port, dbname)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	logger := logger.New(
+		logrus.NewWriter(),
+		logger.Config{
+			SlowThreshold: time.Microsecond,
+			LogLevel:      logger.Warn,
+			Colorful:      false,
+		},
+	)
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger})
 	if err != nil {
 		fmt.Println("asdaaaaa")
 		log.Println("asd", dsn)
 		log.Fatal("連接數據庫失敗111, err: ", err.Error())
 	}
 
+	if err = db.Use(tracing.NewPlugin()); err != nil {
+		log.Fatal(err)
+	}
+
 	db.AutoMigrate(&model.Product{})
 
 	sqlDB, _ := db.DB()
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(1000)
+	sqlDB.SetMaxIdleConns(100)
+	sqlDB.SetMaxOpenConns(5000)
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	return db
