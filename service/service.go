@@ -40,9 +40,8 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
-		}
-		if err != nil {
 			log.Println(err)
+			return
 		}
 	}()
 
