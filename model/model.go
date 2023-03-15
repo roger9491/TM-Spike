@@ -8,7 +8,7 @@ type Product struct {
 }
 
 func (u *Product) TableName() string {
-	return "product"
+	return "Spike_product"
 }
 
 type ProductInfo struct {
