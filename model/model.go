@@ -1,5 +1,9 @@
 package model
 
+const (
+	ProductTableName = "`Spike_product`"
+)
+
 type Product struct {
 	ID          int64  `gorm:"index" json:"id"`
 	ProductName string `gorm:"column:productname;not null" json:"productname"`
@@ -7,8 +11,9 @@ type Product struct {
 	IsDelete 	int		`gorm:"column:isdelete;not null" json:"isdelete"`
 }
 
+
 func (u *Product) TableName() string {
-	return "Spike_product"
+	return ProductTableName
 }
 
 type ProductInfo struct {
