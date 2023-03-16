@@ -3,6 +3,7 @@ package main
 import (
 	"TM-Spike/init/configinit"
 	"TM-Spike/init/opentelemetryinit"
+	"TM-Spike/init/redisinit"
 	"TM-Spike/init/routerinit"
 	"TM-Spike/init/sqlinit"
 	"TM-Spike/router"
@@ -36,7 +37,9 @@ func main() {
 	defer cleanup(context.Background())
 
 	// 初始化資料庫
-	service.OrderRepo.Initialize(sqlinit.InitMySQL(configinit.DBUsername, configinit.DBPassword, configinit.DBHost, configinit.DBPort, configinit.DBName))
+	service.OrderRepo.Initialize(
+		sqlinit.InitMySQL(configinit.DBUsername, configinit.DBPassword, configinit.DBHost, configinit.DBPort, configinit.DBName),
+		redisinit.InitRedis(configinit.RedisHost, configinit.RedisPort, configinit.RedisPassword, configinit.RedisDB))
 
 	// 加載路由
 	routerinit.Include(router.OrderApi)

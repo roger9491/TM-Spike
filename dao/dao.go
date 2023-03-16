@@ -10,10 +10,18 @@ import (
 
 
 
+// 獲取庫存數量
+func SelectCountFromProduct(product string, tx *gorm.DB, c *gin.Context) (count int, err error) {
+	sql := "select count from " + model.ProductTableName + " where productname = ? AND isdelete = 0;"
 
+	if err = tx.WithContext(c.Request.Context()).Raw(sql, product).Scan(&count).Error; err != nil {
+		log.Println("err ", err)
+	}
 
+	return
+}
 
-func SelectOrder(product string, tx *gorm.DB, c *gin.Context) (count int64, err error) {
+func SelectOrder(product string, tx *gorm.DB, c *gin.Context) (count int, err error) {
 	sql := "select count from " + model.ProductTableName + " where productname = ? AND isdelete = 0 for update;"
 
 	if err = tx.WithContext(c.Request.Context()).Raw(sql, product).Scan(&count).Error; err != nil {

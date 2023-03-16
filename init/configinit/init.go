@@ -26,6 +26,13 @@ var (
 	CollectorURLIP   string
 	CollectorURLPort string
 	Insecure         string
+
+	// redis
+	RedisHost 		string
+	RedisPort 		string
+	RedisPassword	string
+	RedisDB 		string
+
 )
 
 func LoadEnv() {
@@ -53,4 +60,10 @@ func LoadEnv() {
 	CollectorURLIP = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT_IP")
 	CollectorURLPort = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT_PORT")
 	Insecure = os.Getenv("INSECURE_MODE")
+
+	RedisHost = os.Getenv("REDIS_HOST")
+	RedisPort = os.Getenv("REDIS_PORT")
+	RedisPassword = os.Getenv("REDIS_PASSWORD")
+	RedisDB = os.Getenv("REDIS_DB")
+
 }

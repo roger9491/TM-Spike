@@ -10,11 +10,11 @@ pipeline {
     }
 
     stages {
-        stage('Build Test image'){
-            steps{
-                sh "docker build --target test -t ${env.PROJECT} ."
-            }
-        }
+        // stage('Build Test image'){
+        //     steps{
+        //         sh "docker build --target test -t ${env.PROJECT} ."
+        //     }
+        // }
         // stage('Test'){
         //     steps{
         //         // 測試環境需使用docker ，使用掛載捲的方式
