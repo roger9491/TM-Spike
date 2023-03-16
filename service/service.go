@@ -70,7 +70,7 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 	`)
 
 	// 執行腳本
-	n, err := luaScript.Run(c, od.rdb, []string{product.ProductName, "1"}).Result()
+	n, err := luaScript.Run(c, od.rdb, []string{product.ProductName, "1"}).Int()
 	if err != nil {
 		panic(err)
 	}
@@ -78,7 +78,6 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 		produdctInfo.Status = failed
 		return
 	}
-
 	// 修改數據庫
 	tx = tx.Begin()
 	// count, err := dao.SelectOrder(product.ProductName, tx, c)
