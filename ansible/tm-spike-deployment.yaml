@@ -71,6 +71,28 @@ spec:
             configMapKeyRef:
               name: tm
               key: insecure_mode
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: redis_host
+        - name: REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: redis_port
+        - name: REDIS_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: redis_password
+        - name: REDIS_DB
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: redis_db
+
+        
 
 ---
 
