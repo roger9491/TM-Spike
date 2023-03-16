@@ -81,8 +81,8 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 
 	// 修改數據庫
 	tx = tx.Begin()
-	count, err := dao.SelectOrder(product.ProductName, tx, c)
-	if count > 0 {
+	// count, err := dao.SelectOrder(product.ProductName, tx, c)
+	// if count > 0 {
 		if err = dao.UpdateOrder(product.ProductName, tx, c); err != nil {
 			panic(err)
 		}
@@ -91,15 +91,15 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 			panic(err)
 		}
 
-		if count == 1 {
-			if err = dao.UpdateOrderIsDelete(product.ProductName, tx, c); err != nil {
-				panic(err)
-			}
-		}
+		// if count == 1 {
+		// 	if err = dao.UpdateOrderIsDelete(product.ProductName, tx, c); err != nil {
+		// 		panic(err)
+		// 	}
+		// }
 
-	} else {
-		produdctInfo.Status = failed
-	}
+	// } else {
+	// 	produdctInfo.Status = failed
+	// }
 	tx.Commit()
 	produdctInfo.Product = product.ProductName
 	return
