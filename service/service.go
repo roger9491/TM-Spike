@@ -42,7 +42,7 @@ func (od *orderSQL) Initialize(db *gorm.DB, rdb *redis.Client) {
 }
 
 func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo model.ProductInfo, err error) {
-	tx := od.db
+	tx := od.db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -79,22 +79,22 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 		return
 	}
 	// 修改數據庫
-	tx = tx.Begin()
+
 	// count, err := dao.SelectOrder(product.ProductName, tx, c)
 	// if count > 0 {
-		if err = dao.UpdateOrder(product.ProductName, tx, c); err != nil {
-			panic(err)
-		}
-		produdctInfo.Status = successful
-		if err = dao.CreateOrder(product.ProductName, 1, tx, c); err != nil {
-			panic(err)
-		}
+	if err = dao.UpdateOrder(product.ProductName, tx, c); err != nil {
+		panic(err)
+	}
+	produdctInfo.Status = successful
+	if err = dao.CreateOrder(product.ProductName, 1, tx, c); err != nil {
+		panic(err)
+	}
 
-		// if count == 1 {
-		// 	if err = dao.UpdateOrderIsDelete(product.ProductName, tx, c); err != nil {
-		// 		panic(err)
-		// 	}
-		// }
+	// if count == 1 {
+	// 	if err = dao.UpdateOrderIsDelete(product.ProductName, tx, c); err != nil {
+	// 		panic(err)
+	// 	}
+	// }
 
 	// } else {
 	// 	produdctInfo.Status = failed
@@ -145,7 +145,7 @@ func loadDataFromDBIfCacheMiss(db *gorm.DB, rdb *redis.Client, c *gin.Context, p
 	if _, err := rdb.Get(c, productNmae).Result(); err == nil {
 		return true
 	}
-fmt.Println("3333")
+	fmt.Println("3333")
 	mu.Lock()
 	defer mu.Unlock()
 	// 從資料庫獲取庫存
