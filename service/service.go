@@ -42,15 +42,6 @@ func (od *orderSQL) Initialize(db *gorm.DB, rdb *redis.Client) {
 }
 
 func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo model.ProductInfo, err error) {
-	tx := od.db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-			log.Println("12", err)
-			return
-		}
-	}()
-
 	// redis
 	// 判斷有沒有緩存
 	if hasStock := loadDataFromDBIfCacheMiss(od.db, od.rdb, c, product.ProductName); !hasStock {
@@ -79,7 +70,15 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 		return
 	}
 	// 修改數據庫
-
+	tx := od.db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			log.Println("12", err)
+			return
+		}
+	}()
+	
 	// count, err := dao.SelectOrder(product.ProductName, tx, c)
 	// if count > 0 {
 	if err = dao.UpdateOrder(product.ProductName, tx, c); err != nil {
