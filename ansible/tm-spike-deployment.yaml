@@ -91,6 +91,22 @@ spec:
             configMapKeyRef:
               name: tm
               key: redis_db
+        - name: KAFKA_IP
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: kafka_ip
+        - name: KAFKA_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: kafka_port
+        - name: KAFKA_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              name: tm
+              key: kafka_topic
+
 
         
 
