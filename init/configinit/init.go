@@ -1,6 +1,7 @@
 package configinit
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -33,6 +34,11 @@ var (
 	RedisPassword	string
 	RedisDB 		string
 
+	// kafka
+	KafkaIP 		string
+	KafkaPort 		string
+	KafkaTopic		string
+
 )
 
 func LoadEnv() {
@@ -42,6 +48,7 @@ func LoadEnv() {
 
 		projectRootPath = filepath.Join(filepath.Dir(b), "../../")
 	)
+	fmt.Println("asd", filepath.Dir(b))
 	err := godotenv.Load(os.ExpandEnv(projectRootPath + "/.env"))
 	if err != nil {
 		log.Printf("Error getting env %v\n", err)
@@ -66,4 +73,7 @@ func LoadEnv() {
 	RedisPassword = os.Getenv("REDIS_PASSWORD")
 	RedisDB = os.Getenv("REDIS_DB")
 
+	KafkaIP = os.Getenv("KAFKA_IP")
+	KafkaPort = os.Getenv("KAFKA_PORT")
+	KafkaTopic = os.Getenv("KAFKA_TOPIC")
 }

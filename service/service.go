@@ -2,7 +2,9 @@ package service
 
 import (
 	"TM-Spike/dao"
+	"TM-Spike/init/configinit"
 	"TM-Spike/model"
+	"context"
 	"fmt"
 	"log"
 	"strconv"
@@ -10,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
+	"github.com/segmentio/kafka-go"
 	"gorm.io/gorm"
 )
 
@@ -69,37 +72,57 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 		produdctInfo.Status = failed
 		return
 	}
-	// 修改數據庫
-	tx := od.db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-			log.Println("12", err)
-			return
-		}
-	}()
+
+	// kafka 解偶mysql
+	kafkaURL := configinit.KafkaIP + ":" + configinit.KafkaPort
+	// create a topic if not exist
+	_, err = kafka.DialLeader(context.Background(), "tcp", kafkaURL, configinit.KafkaPort, 0)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	writer := &kafka.Writer{
+		Addr:     kafka.TCP(kafkaURL),
+		Topic:    configinit.KafkaTopic,
+		Balancer: &kafka.LeastBytes{},
+	}
+	defer writer.Close()
+
+	// 形成 message
+	msg := kafka.Message{
+		Value: []byte(product.ProductName),
+	}
 	
-	// count, err := dao.SelectOrder(product.ProductName, tx, c)
-	// if count > 0 {
-	if err = dao.UpdateOrder(product.ProductName, tx, c); err != nil {
-		panic(err)
-	}
-	produdctInfo.Status = successful
-	if err = dao.CreateOrder(product.ProductName, 1, tx, c); err != nil {
-		panic(err)
+	// 送出 message
+	err = writer.WriteMessages(context.Background(), msg)
+	if err != nil {
+		log.Println(err)
+		return
 	}
 
-	// if count == 1 {
-	// 	if err = dao.UpdateOrderIsDelete(product.ProductName, tx, c); err != nil {
-	// 		panic(err)
+	// 修改數據庫
+	// tx := od.db.Begin()
+	// defer func() {
+	// 	if r := recover(); r != nil {
+	// 		tx.Rollback()
+	// 		log.Println("12", err)
+	// 		return
 	// 	}
+	// }()
+
+	// if err = dao.UpdateOrder(product.ProductName, tx, c); err != nil {
+	// 	panic(err)
+	// }
+	// produdctInfo.Status = successful
+	// if err = dao.CreateOrder(product.ProductName, 1, tx, c); err != nil {
+	// 	panic(err)
 	// }
 
-	// } else {
-	// 	produdctInfo.Status = failed
-	// }
-	tx.Commit()
+	// tx.Commit()
+
+	// 成功下訂單
 	produdctInfo.Product = product.ProductName
+	produdctInfo.Status = successful
 	return
 }
 
