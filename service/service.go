@@ -96,7 +96,7 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 	// 送出 message
 	err = writer.WriteMessages(context.Background(), msg)
 	if err != nil {
-		log.Println(err)
+		log.Println("送出失敗",err)
 		return
 	}
 
@@ -121,6 +121,7 @@ func (od *orderSQL) Order(product model.Product, c *gin.Context) (produdctInfo m
 	// tx.Commit()
 
 	// 成功下訂單
+	log.Println("下訂單成功")
 	produdctInfo.Product = product.ProductName
 	produdctInfo.Status = successful
 	return
